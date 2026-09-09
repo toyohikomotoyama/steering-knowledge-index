@@ -1,0 +1,4 @@
+# このリポジトリ自体の制作メモ（非公開）。
+# example/ 配下の .steering/ .knowledge-index/ はサンプルの一部なので対象外（先頭の / でルート直下のみに限定）。
+/.steering/
+/.knowledge-index/

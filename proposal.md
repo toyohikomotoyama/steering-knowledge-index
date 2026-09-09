@@ -20,6 +20,10 @@ What also matters is experience:
 
 This use case separates those concerns into three layers: `docs/`, `.steering/`, and `.knowledge-index/`.
 
+Findings, verification, and decisions captured in Steering can cause the Current Truth in `docs/` to be created or corrected. Retrieval runs in the opposite direction: start with Current Truth, and descend through the Knowledge Index into Steering only when the question requires history, rationale, or analogous experience.
+
+> **Current Truth first. Experience when needed.**
+
 ---
 
 ## 1. Docs — Current Deliverables
@@ -32,7 +36,19 @@ The question this layer answers is:
 
 A reader should not need to work through obsolete hypotheses or investigation detours just to understand the current specification.
 
-When an investigation changes the understanding of the system, the verified current state is reflected in `docs/`.
+When an investigation changes the understanding of the system, findings captured in Steering are verified and the resulting Current Truth is reflected in `docs/`.
+
+```text
+investigation / implementation / verification
+    ↓
+Steering
+    ↓
+verified current understanding
+    ↓
+docs/
+```
+
+This is not deterministic replay. A human or AI interprets and verifies the experience record before updating Current Truth.
 
 ---
 
@@ -132,6 +148,8 @@ If an external answer resolved a pending item, preserve the answer and what it e
 
 **Do not preserve the history of the TODO itself; preserve why the TODO moved.**
 
+In other words: the progress section is the current position and may be overwritten; the events and decisions that produced that position remain chronological.
+
 ### 2.4 During work, Steering acts as a coordination surface
 
 With this structure, Steering also serves as a live coordination surface.
@@ -163,13 +181,15 @@ Steering is therefore more than a TODO list. It is a shared surface for the huma
 
 During active work, a Steering file contains both the current state and the path that led to it.
 
-When the work is complete, the current specification is reflected in `docs/`.
+When the work is complete, verified Current Truth is reflected in `docs/`.
 
 The Steering file is not discarded.
 
 What was a progress record yesterday becomes an experience record today.
 
 Later, when similar work appears, that experience can be retrieved again.
+
+**Yesterday's progress record becomes tomorrow's history, and that history can become the next task's risk signal.**
 
 This is also why the word “Steering” happens to fit the role the practice evolved into:
 
@@ -201,7 +221,7 @@ It is experience-based risk anticipation: surface structurally similar past fail
 
 ---
 
-## 3. Knowledge Index — Retrieval Paths into Memory
+## 3. Knowledge Index — Retrieval Paths into Experience
 
 As Steering grows, another problem appears:
 
@@ -219,7 +239,20 @@ An entry mainly contains:
 - Steering file,
 - exact heading in that Steering file.
 
-### 3.1 Give one experience multiple entry points
+### 3.1 Do not duplicate Current Truth and Experience
+
+If a question can be answered entirely from the current specification, verified behavior, or configuration in `docs/`, the Knowledge Index should not duplicate that information.
+
+The index becomes relevant when the question asks for history, rationale, or analogous experience, such as:
+
+- Why is the current specification this way?
+- Did we have a similar problem before?
+- Where did the previous task get stuck?
+- Which confirmation turned out to matter later?
+
+**The Knowledge Index connects Current Truth to past experience without collapsing them into the same layer.**
+
+### 3.2 Give one experience multiple entry points
 
 A single Steering file may naturally contain topics such as:
 
@@ -237,7 +270,7 @@ environment mismatch ─┘
 
 This allows a future user or agent to rediscover the same experience using language that differs from the wording used when the work originally happened.
 
-### 3.2 Do not store a fixed summary
+### 3.3 Do not store a fixed summary
 
 As a rule, the Knowledge Index does not store a narrative summary of the experience.
 
@@ -258,7 +291,7 @@ Instead, the Knowledge Index says:
 
 The current AI then reads the original record in the context of the current question and reconstructs the Knowledge needed now.
 
-### 3.3 Grow bottom-up
+### 3.4 Grow bottom-up
 
 The taxonomy is not designed up front.
 
@@ -274,9 +307,50 @@ The Knowledge Index is the current retrieval interface and may evolve as current
 
 ## 4. Relationship Between the Three Layers
 
+There are two different flows: **updating Current Truth** and **retrieving prior experience**.
+
+### Update flow
+
+```text
+.steering/
+    Current Work State
+    + Chronological Experience
+        ↓
+    investigation / verification / decisions
+        ↓
+docs/
+    Current Truth
+```
+
+Experience recorded in Steering can change the current understanding, and verified findings are reflected in Docs.
+
+### Retrieval flow
+
+```text
+current question
+    ↓
+docs/ — Current Truth
+    ↓
+Can Current Truth answer it?
+    ├─ Yes → answer
+    └─ No
+         ↓
+.knowledge-index/ — Retrieval Paths into Experience
+         ↓
+relevant .steering/
+         ↓
+read the original record in the current context
+         ↓
+reconstruct the Knowledge needed now
+         ↓
+decision / next action / warning
+```
+
+The roles are therefore:
+
 ```text
 docs/
-    Current State
+    Current Truth
     "What is true now?"
 
 .steering/
@@ -285,24 +359,8 @@ docs/
     "What happened, where are we now, and how did we get here?"
 
 .knowledge-index/
-    Retrieval Paths
+    Retrieval Paths into Experience
     "Where are the relevant memories?"
-```
-
-At retrieval time:
-
-```text
-current question
-    ↓
-Knowledge Index
-    ↓
-relevant past Steering
-    ↓
-read the original record in the current context
-    ↓
-reconstruct the Knowledge needed now
-    ↓
-decision / next action / warning
 ```
 
 The important distinction is that **stored experience is not the same thing as present cognition**.
@@ -332,7 +390,7 @@ Steering is therefore not a report produced separately from the work.
 
 It is **an experience record produced naturally from the work itself**.
 
-### 5.1 The repository becomes a first-class, reverse-queryable handover artifact
+### 5.1 The repository becomes a reverse-queryable handover artifact
 
 Keeping Steering and the Knowledge Index in the same repository as the code provides another practical benefit:
 
@@ -358,7 +416,7 @@ Instead, the repository contains:
 ```text
 current code
     +
-docs/                 current specification
+docs/                 Current Truth
     +
 .knowledge-index/     entry points from current questions into the past
     +
@@ -366,7 +424,7 @@ docs/                 current specification
                       confirmations, and failures
 ```
 
-A successor or AI agent can begin from a question asked today, use the Knowledge Index to find relevant Steering, and trace backward into the experience that produced the current state.
+A successor or AI agent begins with Docs to understand the current state. Only when rationale, history, or analogous experience is needed does it use the Knowledge Index to find relevant Steering and trace backward into the experience that produced the current state.
 
 This is fundamentally different from a handover document that must be read in the order chosen by its author.
 
@@ -386,13 +444,25 @@ It is also **the project’s accumulated experience: what happened, what was lea
 
 ## 6. Questions for OKF
 
+OKF already provides `log.md` for Concept or bundle change history.
+
+The history preserved by Steering is different in kind:
+
+- `log.md` — **What changed?**
+- Steering — **How did we get here?**
+
+Steering preserves not only the resulting change, but hypotheses, rejected paths, dead ends, surprises, external waiting states, and corrections encountered on the way to Current Knowledge.
+
+So the claim is not that OKF has no history mechanism. The deeper question is: **should change history and experiential history be treated as the same kind of history?**
+
 This use case raises several questions for OKF:
 
 1. Should Current Knowledge and the Experiential History that produced it be represented as the same unit?
 2. How should OKF relate to experience records that are organized by time or work episode and may contain multiple Concepts?
 3. Can multiple Retrieval Paths into original records be a useful OKF usage pattern without duplicating the Knowledge itself?
-4. Is separating Current State / Experiential History / Retrieval Index a useful convention for long-lived AI agents?
+4. Is separating Current Truth / Experiential History / Retrieval Index — and reading Current Truth first — a useful convention for long-lived AI agents?
 5. How should we think about a lifecycle in which a live coordination surface becomes an Experience Record after completion and later supports analogous-risk detection?
+6. As Steering records accumulate, how should an agent decide when it has retrieved enough prior experience without prematurely stopping exploration or reading without bound?
 
 This is not a demand for a specific OKF specification change.
 
@@ -402,17 +472,35 @@ It is a use case intended to discuss a practical question that emerges in long-r
 
 ---
 
+## Conceptual Note — Structural Similarity to Event Sourcing
+
+This model emerged from practical use. Only afterward did we notice that it has a structural resemblance to Event Sourcing.
+
+At a conceptual level:
+
+```text
+Steering        ≈ history of experience and events
+Docs            ≈ Current Truth / materialized-view-like output
+Knowledge Index ≈ read / retrieval index over experience
+```
+
+But this is not strict Event Sourcing.
+
+Steering contains more than structured events: hypotheses, rejected hypotheses, conversations, external confirmations, and accidental discoveries. Docs is also not reconstructed by deterministic replay.
+
+**The resemblance is that history contributes to current state; the difference is that humans or AI interpret and verify experience before updating Current Truth.**
+
+---
+
 ## Conceptual Note — Structural Similarity to Yogācāra
 
-While developing this model, we noticed an interesting structural similarity to **Yogācāra (Vijñānavāda), the Buddhist “consciousness-only” tradition**.
+This model was not designed from Buddhist philosophy.
 
-This is not intended as a strict technical mapping between AI architecture and Buddhist concepts. In particular, Ālayavijñāna and the six consciousnesses should not be treated as literal software components.
+After developing it through practical use, we noticed an interesting structural similarity to **Yogācāra**, particularly the distinction between accumulated traces of experience and cognition formed in the present.
 
-The useful resemblance is conceptual.
+This is not intended as a strict mapping between AI architecture and Buddhist concepts. Traditional Yogācāra discusses eight consciousnesses, so any analogy involving Ālayavijñāna and the six consciousnesses is necessarily selective.
 
-In this model, past experience is not stored as fixed “present Knowledge.”
-
-Steering accumulates traces of experience.
+In this model, Steering accumulates traces of experience.
 
 A current question triggers retrieval through the Knowledge Index, after which the current AI rereads relevant experience in the present context and forms a current understanding or decision.
 
@@ -428,8 +516,6 @@ decision / action
 new experience is accumulated again
 ```
 
-This resembles, at a very high level, the Yogācāra view in which traces of experience accumulate, participate in the formation of present cognition, and are in turn affected by new experience.
-
 The point is not to turn Buddhist terminology into an AI architecture.
 
 The useful design intuition is simpler:
@@ -438,4 +524,4 @@ The useful design intuition is simpler:
 
 Instead of storing past experience as a fixed answer, preserve it as experience and allow meaning to be formed again from the present situation.
 
-That distinction became a useful conceptual lens for the Steering / Knowledge Index model.
+The similarity is therefore retrospective: a practical model happened to converge on a structure recognizable in an older conceptual tradition.

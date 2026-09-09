@@ -26,9 +26,10 @@
 
 ## 2. Knowledge Index 運用方針 (`.knowledge-index/`)
 
-- `docs/` は成果物。現在の正しい状態を示す。
+- まず `docs/` の Current Truth を確認する。履歴・理由・類似経験が必要なときだけ `.knowledge-index/` → `.steering/` を辿る。**Current Truth first. Experience when needed.**
+- `docs/` は成果物。現在の正しい状態を示す。Steeringで確認された現在状態は、必要に応じて `docs/` へ反映する。
 - `.steering/` は作業中の経緯と経験を残す。
-- `.knowledge-index/` はSteeringを探す索引であり、docsやSteeringの要約置き場ではない。
+- `.knowledge-index/` はSteeringを探す索引であり、docsやSteeringの要約置き場ではない。`docs/` で答えられる内容を重複して持たない。
 - 1エントリは話題名、関連ワード、時系列の参照先を基本とする。
 - 参照先の見出しはSteering上の見出しをそのまま使う。
 - 同じSteering・同じ見出しを複数の話題から参照してよい。

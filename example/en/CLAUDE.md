@@ -26,9 +26,10 @@
 
 ## 2. Knowledge Index policy (`.knowledge-index/`)
 
-- `docs/` contains deliverables and current truth.
+- Check the Current Truth in `docs/` first. Follow `.knowledge-index/` → `.steering/` only when history, rationale, or analogous experience is needed. **Current Truth first. Experience when needed.**
+- `docs/` contains deliverables and current truth. Findings confirmed in Steering should update `docs/` when they change the current state.
 - `.steering/` preserves work history and experience.
-- `.knowledge-index/` is an index into Steering, not a summary store for docs or Steering.
+- `.knowledge-index/` is an index into Steering, not a summary store for docs or Steering. Do not duplicate content that can already be answered from `docs/`.
 - An entry should primarily contain a topic, related words, and chronological references.
 - Preserve the exact Steering heading in each reference.
 - The same Steering file or heading may be referenced from multiple topics.
